@@ -1,0 +1,12 @@
+C:\Users\MaharshiJB\Downloads\Projects\RajMudra\backend\src\RajMudra.Domain\bin\Release\net8.0\RajMudra.Domain.deps.json
+C:\Users\MaharshiJB\Downloads\Projects\RajMudra\backend\src\RajMudra.Domain\bin\Release\net8.0\RajMudra.Domain.dll
+C:\Users\MaharshiJB\Downloads\Projects\RajMudra\backend\src\RajMudra.Domain\bin\Release\net8.0\RajMudra.Domain.pdb
+C:\Users\MaharshiJB\Downloads\Projects\RajMudra\backend\src\RajMudra.Domain\obj\Release\net8.0\RajMudra.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\MaharshiJB\Downloads\Projects\RajMudra\backend\src\RajMudra.Domain\obj\Release\net8.0\RajMudra.Domain.AssemblyInfoInputs.cache
+C:\Users\MaharshiJB\Downloads\Projects\RajMudra\backend\src\RajMudra.Domain\obj\Release\net8.0\RajMudra.Domain.AssemblyInfo.cs
+C:\Users\MaharshiJB\Downloads\Projects\RajMudra\backend\src\RajMudra.Domain\obj\Release\net8.0\RajMudra.Domain.csproj.CoreCompileInputs.cache
+C:\Users\MaharshiJB\Downloads\Projects\RajMudra\backend\src\RajMudra.Domain\obj\Release\net8.0\RajMudra.Domain.sourcelink.json
+C:\Users\MaharshiJB\Downloads\Projects\RajMudra\backend\src\RajMudra.Domain\obj\Release\net8.0\RajMudra.Domain.dll
+C:\Users\MaharshiJB\Downloads\Projects\RajMudra\backend\src\RajMudra.Domain\obj\Release\net8.0\refint\RajMudra.Domain.dll
+C:\Users\MaharshiJB\Downloads\Projects\RajMudra\backend\src\RajMudra.Domain\obj\Release\net8.0\RajMudra.Domain.pdb
+C:\Users\MaharshiJB\Downloads\Projects\RajMudra\backend\src\RajMudra.Domain\obj\Release\net8.0\ref\RajMudra.Domain.dll

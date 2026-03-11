@@ -1,0 +1,276 @@
+<!-- dashboard.component.html -->
+<div class="dashboard">
+  <header>
+    <div class="brand">
+      <span class="brand-icon">₹</span>
+      <span class="brand-name">RajMudra</span>
+    </div>
+    <div class="user-info">
+      <div class="user-badge" *ngIf="auth.email">
+        <span class="user-avatar">{{ auth.email[0].toUpperCase() }}</span>
+        <div class="user-details">
+          <span class="user-email">{{ auth.email }}</span>
+          <span class="user-role">{{ auth.role }}</span>
+        </div>
+      </div>
+      <button type="button" class="logout-btn" (click)="logout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+
+      <!-- Wallet Section -->
+      <section class="card wallet-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon wallet-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            </div>
+            <h2>Your Wallet</h2>
+          </div>
+        </div>
+
+        <div class="balance-block" *ngIf="balance !== null">
+          <span class="balance-label">Available Balance</span>
+          <span class="balance-amount">₹{{ balance }}</span>
+        </div>
+        <div class="balance-block loading" *ngIf="balance === null">
+          <span class="balance-label">Available Balance</span>
+          <span class="balance-loading">
+            <span></span><span></span><span></span>
+          </span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="vouchers-header">
+          <h3>Active Vouchers</h3>
+          <span class="badge" *ngIf="tokens.length > 0">{{ tokens.length }}</span>
+        </div>
+
+        <div class="table-wrapper" *ngIf="tokens.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th>Token ID</th>
+                <th>Amount</th>
+                <th>Purpose</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of tokens">
+                <td><span class="token-id">{{ t.id }}</span></td>
+                <td><span class="amount-pill">₹{{ t.denomination }}</span></td>
+                <td>{{ t.purpose || '—' }}</td>
+                <td class="date-cell">{{ t.createdAt | date : 'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="empty-state" *ngIf="tokens.length === 0">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+          <p>No active vouchers</p>
+        </div>
+      </section>
+
+      <!-- Admin Mint Section -->
+      <section class="card form-card admin-card" *ngIf="isAdmin">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon admin-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <h2>Mint Voucher</h2>
+          </div>
+          <span class="role-tag admin-tag">Admin</span>
+        </div>
+        <form (ngSubmit)="submitMint()">
+          <div class="form-group">
+            <label>User ID (GUID)</label>
+            <input type="text" [(ngModel)]="mintUserId" name="mintUserId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Amount (₹)</label>
+              <input type="number" [(ngModel)]="mintAmount" name="mintAmount" placeholder="0.00" />
+            </div>
+            <div class="form-group">
+              <label>Purpose <span class="optional">optional</span></label>
+              <input type="text" [(ngModel)]="mintPurpose" name="mintPurpose" placeholder="e.g. Salary, Bonus" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-admin">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Mint Voucher
+          </button>
+        </form>
+      </section>
+
+      <!-- Admin Users Panel -->
+      <section class="card admin-users-card" *ngIf="isAdmin">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon admin-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <path d="M20 8v6"/>
+                <path d="M23 11h-6"/>
+              </svg>
+            </div>
+            <h2>Users</h2>
+          </div>
+          <button type="button" class="btn btn-admin" (click)="loadUsers()">Refresh</button>
+        </div>
+
+        <div class="table-wrapper" *ngIf="users.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Merchant Category</th>
+                <th>User ID</th>
+                <th class="actions-col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of users">
+                <td>{{ u.email }}</td>
+                <td>{{ u.role }}</td>
+                <td>{{ u.merchantCategory || '—' }}</td>
+                <td><span class="token-id">{{ u.id }}</span></td>
+                <td class="actions-col">
+                  <button type="button" class="btn btn-transfer" (click)="selectUser(u)">Edit</button>
+                  <button type="button" class="btn btn-danger" (click)="deleteUser(u)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="empty-state" *ngIf="users.length === 0">
+          <p>No users found.</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div *ngIf="selectedUser; else selectHint" class="admin-user-editor">
+          <h3>Edit User</h3>
+          <p class="muted">User: <strong>{{ selectedUser.email }}</strong> ({{ selectedUser.id }})</p>
+
+          <form (ngSubmit)="saveUser()">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="text" [(ngModel)]="editEmail" name="editEmail" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Role</label>
+                <select [(ngModel)]="editRole" name="editRole">
+                  <option value="User">User</option>
+                  <option value="Merchant">Merchant</option>
+                  <option value="Admin">Admin</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Merchant Category <span class="optional">optional</span></label>
+                <input type="text" [(ngModel)]="editMerchantCategory" name="editMerchantCategory" placeholder="e.g. Food" />
+              </div>
+            </div>
+            <div class="actions-row">
+              <button type="submit" class="btn btn-admin">Save</button>
+              <button type="button" class="btn" (click)="clearSelectedUser()">Cancel</button>
+            </div>
+          </form>
+
+          <div class="divider"></div>
+
+          <h3>Reset Password</h3>
+          <form (ngSubmit)="submitResetPassword()">
+            <div class="form-group">
+              <label>New Password</label>
+              <input type="password" [(ngModel)]="resetPassword" name="resetPassword" placeholder="min 6 characters" />
+            </div>
+            <button type="submit" class="btn btn-danger">Reset Password</button>
+          </form>
+        </div>
+
+        <ng-template #selectHint>
+          <p class="muted">Select a user from the table to edit or reset password.</p>
+        </ng-template>
+      </section>
+
+      <!-- User Transfer Section -->
+      <section class="card form-card transfer-card" *ngIf="isUser">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon transfer-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <h2>Transfer Voucher</h2>
+          </div>
+          <span class="role-tag user-tag">User</span>
+        </div>
+        <form (ngSubmit)="submitTransfer()">
+          <div class="form-group">
+            <label>Token ID</label>
+            <input type="text" [(ngModel)]="transferTokenId" name="transferTokenId" placeholder="Enter token ID" />
+          </div>
+          <div class="form-group">
+            <label>Recipient User ID (GUID)</label>
+            <input type="text" [(ngModel)]="transferRecipientId" name="transferRecipientId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+          </div>
+          <div class="form-group">
+            <label>Amount (₹)</label>
+            <input type="number" [(ngModel)]="transferAmount" name="transferAmount" placeholder="0.00" />
+          </div>
+          <button type="submit" class="btn btn-transfer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Send Transfer
+          </button>
+        </form>
+      </section>
+
+      <!-- Merchant Redeem Section -->
+      <section class="card form-card merchant-card" *ngIf="isMerchant">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon merchant-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            </div>
+            <h2>Redeem Voucher</h2>
+          </div>
+          <span class="role-tag merchant-tag">Merchant</span>
+        </div>
+        <form (ngSubmit)="submitRedeem()">
+          <div class="form-group">
+            <label>Token ID</label>
+            <input type="text" [(ngModel)]="redeemTokenId" name="redeemTokenId" placeholder="Enter token ID to redeem" />
+          </div>
+          <button type="submit" class="btn btn-merchant">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+            Redeem Now
+          </button>
+        </form>
+      </section>
+
+    </div>
+
+    <!-- Status -->
+    <div class="status-bar" *ngIf="message || error">
+      <div class="status-message" *ngIf="message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        {{ message }}
+      </div>
+      <div class="status-error" *ngIf="error">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        {{ error }}
+      </div>
+    </div>
+  </main>
+</div>

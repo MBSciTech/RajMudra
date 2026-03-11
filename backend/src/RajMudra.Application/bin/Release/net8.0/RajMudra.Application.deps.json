@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "RajMudra.Application/1.0.0": {
+        "dependencies": {
+          "RajMudra.Domain": "1.0.0"
+        },
+        "runtime": {
+          "RajMudra.Application.dll": {}
+        }
+      },
+      "RajMudra.Domain/1.0.0": {
+        "runtime": {
+          "RajMudra.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "RajMudra.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "RajMudra.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
